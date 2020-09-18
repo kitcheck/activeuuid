@@ -173,7 +173,7 @@ module ActiveUUID
       # end
         def quote(value, column = nil)
           value = UUIDTools::UUID.serialize(value) if column && column.type == :uuid
-          super(value, column)
+          super(value)
         end
 
         def type_cast(value, column = nil)
