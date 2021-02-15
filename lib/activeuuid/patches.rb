@@ -245,7 +245,7 @@ module ActiveUUID
 
       #  alias_method_chain :initialize_type_map, :uuid
       # end
-      def initialize_type_map(m)
+      def initialize_type_map(m = type_map)
         super(m)
         register_class_with_limit m, /binary\(16(,0)?\)/i, ::ActiveRecord::Type::UUID
       end
