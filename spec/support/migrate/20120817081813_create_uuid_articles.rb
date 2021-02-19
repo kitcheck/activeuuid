@@ -1,4 +1,4 @@
-class CreateUuidArticles < ActiveRecord::Migration
+class CreateUuidArticles < ActiveRecord::Migration[4.2]
   def change
     create_table :uuid_articles, :id => false do |t|
       t.uuid :id, :primary_key => true

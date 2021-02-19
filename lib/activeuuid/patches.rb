@@ -71,7 +71,7 @@ module ActiveUUID
       #   alias_method_chain :type_cast_code, :uuid if ActiveRecord::VERSION::MAJOR < 4
       #   alias_method_chain :simplified_type, :uuid
       # end
-      
+
       def type_cast(value)
           return UUIDTools::UUID.serialize(value) if type == :uuid
           # type_cast_without_uuid(value)
@@ -171,9 +171,15 @@ module ActiveUUID
       #   alias_method_chain :type_cast, :visiting
         # alias_method_chain :native_database_types, :uuid
       # end
-        def quote(value, column = nil)
-          value = UUIDTools::UUID.serialize(value) if column && column.type == :uuid
-          super(value)
+        def quote(value)
+          if value && value.try(:type).is_a?(ActiveRecord::Type::UUID)
+            return "'#{value.value}'" unless value.value.respond_to?(:raw)
+
+            s = value.value.raw.unpack("H*")[0]
+            "x'#{s}'"
+          else
+            super(value)
+          end
         end
 
         def type_cast(value, column = nil)
@@ -235,11 +241,11 @@ module ActiveUUID
       #    initialize_type_map_without_uuid(m)
       #    register_class_with_limit m, /binary\(16(,0)?\)/i, ::ActiveRecord::Type::UUID
       #   end
-        
+
 
       #  alias_method_chain :initialize_type_map, :uuid
       # end
-      def initialize_type_map(m)
+      def initialize_type_map(m = type_map)
         super(m)
         register_class_with_limit m, /binary\(16(,0)?\)/i, ::ActiveRecord::Type::UUID
       end
@@ -250,7 +256,7 @@ module ActiveUUID
       require 'active_record/connection_adapters/mysql2_adapter' if Gem.loaded_specs.has_key? 'mysql2'
       require 'active_record/connection_adapters/sqlite3_adapter' if Gem.loaded_specs.has_key? 'sqlite3'
       require 'active_record/connection_adapters/postgresql_adapter' if Gem.loaded_specs.has_key? 'pg'
-      
+
       ActiveRecord::ConnectionAdapters::Table.send :prepend, Migrations if defined? ActiveRecord::ConnectionAdapters::Table
       ActiveRecord::ConnectionAdapters::TableDefinition.send :prepend, Migrations if defined? ActiveRecord::ConnectionAdapters::TableDefinition
 
