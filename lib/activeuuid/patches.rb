@@ -172,10 +172,10 @@ module ActiveUUID
         # alias_method_chain :native_database_types, :uuid
       # end
         def quote(value)
-          if value && value.try(:type).is_a?(ActiveRecord::Type::UUID)
-            return "'#{value.value}'" unless value.value.respond_to?(:raw)
+          if value && value.is_a?(UUIDTools::UUID)
+            return "'#{value}'" unless value.respond_to?(:raw)
 
-            s = value.value.raw.unpack("H*")[0]
+            s = value.raw.unpack("H*")[0]
             "x'#{s}'"
           else
             super(value)
