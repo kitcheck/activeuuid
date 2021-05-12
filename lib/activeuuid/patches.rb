@@ -1,7 +1,7 @@
 require 'active_record'
 require 'active_support/concern'
 
-if ActiveRecord::VERSION::MAJOR == 4 and ActiveRecord::VERSION::MINOR == 2 or ActiveRecord::VERSION::MAJOR == 5
+if ActiveRecord::VERSION::MAJOR == 4 and ActiveRecord::VERSION::MINOR == 2 or ActiveRecord::VERSION::MAJOR >= 5
   module ActiveRecord
     module Type
       class UUID < Binary # :nodoc:
@@ -260,7 +260,7 @@ module ActiveUUID
       ActiveRecord::ConnectionAdapters::Table.send :prepend, Migrations if defined? ActiveRecord::ConnectionAdapters::Table
       ActiveRecord::ConnectionAdapters::TableDefinition.send :prepend, Migrations if defined? ActiveRecord::ConnectionAdapters::TableDefinition
 
-      if ActiveRecord::VERSION::MAJOR == 4 and ActiveRecord::VERSION::MINOR == 2 or ActiveRecord::VERSION::MAJOR == 5
+      if ActiveRecord::VERSION::MAJOR == 4 and ActiveRecord::VERSION::MINOR == 2 or ActiveRecord::VERSION::MAJOR >= 5
         ActiveRecord::ConnectionAdapters::Mysql2Adapter.send :prepend, AbstractAdapter if defined? ActiveRecord::ConnectionAdapters::Mysql2Adapter
         ActiveRecord::ConnectionAdapters::SQLite3Adapter.send :prepend, AbstractAdapter if defined? ActiveRecord::ConnectionAdapters::SQLite3Adapter
       else
